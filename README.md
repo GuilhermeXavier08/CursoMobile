@@ -10,6 +10,29 @@
     -Introdução ao flutter (Mobile)
         -O que são aplicativos Mobile
         -Diferença de desenvolvimento nativo x multiplataforma
+            -Nativo:
+                -Android:
+                    -IDE: Android Studio
+                    -SDK Android SDK
+                    -Plataforma de desenvolvimento: Windows / Linux / Mac
+                    -Linguagem: Kotlin / Java
+                -IOS:
+                    -IDE: Xcode
+                    -SDK: Cocoa Touch
+                    -Plataforma de Desenvolvimento: Mac
+                    -Linguagens: Swift / ObjC
+            -Multiplataforma:
+                -React Native
+                    -Linguagem: JavaScript
+                    -Resultado: Aplicativos Android / IOS / Web
+                    -Mecanismo: Nativo
+                -Flutter (Nosso)
+                    -Linguagem: Dart
+                    -Resultado: Aplicativos Android / IOS / Windows / Linux / Mac
+                -Ionic
+                    -Linguagem: JavaScript
+                    -Resultado: Android / IOS / Web
+                    -Mecanismo: RunTime
         -Preparação do Ambiente de desenvolvimento
             -Instalação do Flutter
             -Instalação do Android SDK (CLI)
