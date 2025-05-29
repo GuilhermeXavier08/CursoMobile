@@ -1,22 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:sa_petshop/controllers/pet_controller.dart';
+import 'package:sa_petshop/view/cadastro_pet_screen.dart';
 import '../models/pet_model.dart';
-class HomeScreen extends StatefulWidget{
+
+class HomeScreen extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
     return _HomeScreenState();
   }
 }
 
-class _HomeScreenState extends State<HomeScreen>{
+class _HomeScreenState extends State<HomeScreen> {
   final PetController _controllerPet = PetController();
-  List<Pet> _pets=[];
+
+  List<Pet> _pets = [];
   bool _isLoading = true;
+
   @override
   void initState() {
     super.initState();
     _carregarDados();
   }
+
   void _carregarDados() async {
     setState(() {
       _isLoading = true;
@@ -25,34 +30,48 @@ class _HomeScreenState extends State<HomeScreen>{
     try {
       _pets = await _controllerPet.readPets();
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Erro ao carregar os dados: $e"))
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Erro ao carregar os dados: $e")));
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
     }
-    setState(() {
-      _isLoading = false;
-    });
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Meus Pets"),
+      appBar: AppBar(title: Text("Meus Pets")),
+      body: _isLoading
+          ? Center(child: CircularProgressIndicator())
+          : Padding(
+              padding: EdgeInsets.all(16),
+              child: Expanded(
+                child: ListView.builder(
+                  itemCount: _pets.length,
+                  itemBuilder: (context, index) {
+                    final pet = _pets[index];
+                    return ListTile(
+                      title: Text("${pet.nome} - ${pet.raca}"),
+                      subtitle: Text("${pet.nomeDono} - ${pet.telefoneDono}"),
+                      onTap: () => {
+                        // in the future, page od details of the pet
+                      },
+                    );
+                  },
+                ),
+              ),
+            ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => CadastroPetScreen()),
+        ),
+        tooltip: "Adicionar Novo Pet",
+        child: Icon(Icons.add),
       ),
-      body: _isLoading ? Center(
-        child: CircularProgressIndicator(),) : Padding(
-          padding: EdgeInsets.all(16),
-          child: Expanded(child: ListView.builder(
-            itemCount: _pets.length,
-            itemBuilder: (context, index){
-              final pet = _pets[index];
-              return ListTile(
-                title: Text(pet.nome),
-                subtitle: Text(pet.nomeDono),
-              );
-            },
-          )),
-        )
     );
   }
 }

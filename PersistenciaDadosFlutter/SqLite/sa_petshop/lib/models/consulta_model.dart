@@ -5,14 +5,14 @@ class Consulta {
   final int petId;
   final DateTime dataHora;
   final String tipoServico;
-  final String? observacao;
+  final String observacao;
 
   Consulta({
     this.id,
     required this.petId,
     required this.dataHora,
     required this.tipoServico,
-    this.observacao,
+    required this.observacao,
   });
 
   //toMap - obj -> BD
@@ -33,7 +33,7 @@ class Consulta {
       petId: map['pet_id'] as int,
       dataHora: DateTime.parse(map['data_hora'] as String),
       tipoServico: map['tipo_servico'] as String,
-      observacao: map['observacao'] as String?,
+      observacao: map['observacao'] as String,
     );
   }
 

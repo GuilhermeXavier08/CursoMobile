@@ -1,67 +1,113 @@
-import 'package:sa_petshop/models/pet_model.dart';
+//classe de ajdua para conexão com db
+
+import 'package:sa_petshop/models/consulta_model.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
-import 'package:path_provider/path_provider.dart';
 
-class PetShopDBHelper{ //fazer conecão singleton
-  static Database? _database;
+import '../models/pet_model.dart';
+
+class PetShopDBHelper {
+  // fazer conexão singleton
+  static Database? _database; // obj SQlite conexão com BD
+
+  //classe do tipo Singleton
   static final PetShopDBHelper _instance = PetShopDBHelper._internal();
 
   PetShopDBHelper._internal();
   factory PetShopDBHelper() {
     return _instance;
   }
-  // verificação do banco de dados -> verifica se o banco já foi criado e se esta aberto
-  Future<Database> _initDatabase() async{
-    final dbPath = await getDatabasePath();
-    final path = join(dbPath, 'petshop.db');
 
-    return await openDatabase(
-      path,
-      onCreate: (db,version) async{
-        await db.execute(
-          '''CREATE TABLE IF NOT EXISTS pets (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            nome TEXT NOT NULL,
-            raca TEXT NOT NULL,
-            nome_dono TEXT NOT NULL,
-            telefone_dono TEXT NOT NULL,
-            );'''
-        );
-      },
-      version: 1,
-    );
+  //verificação do banco de dados  -> verificar se já fooi criado, e se esta aberto
+  Future<Database> _initDatabase() async {
+    final dbPath = await getDatabasesPath();
+    final path = join(dbPath, "petshop.db");
+
+    return await openDatabase(path, version: 1, onCreate: _onCreateDB);
   }
 
-  Future<DataBase> get database async {
-    if(_database != null) {return _database!;}
-  else{
-    _database = await _initDatabase();
-    return _database!;
+  _onCreateDB(Database db, int version) async {
+    await db.execute("""CREATE TABLE IF NOT EXISTS pets(
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      nome TEXT NOT NULL,
+      raca TEXT NOT NULL,
+      nome_dono TEXT NOT NULL,
+      telefone_dono TEXT NOT NULL);""");
+    print("Tabela pets criada");
+    await db.execute("""CREATE TABLE IF NOT EXISTS consultas(
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      pet_id INTEGER NOT NULL,
+      data_hora TEXT NOT NULL,
+      tipo_servico TEXT NOT NULL,
+      observacao TEXT NOT NULL,
+      FOREIGN KEY (pet_id) REFERENCES pets(id) ON DELETE CASCADE
+      )""");
+    print("Tabela consulta criada");
+  }
+
+  //veririfa se o banco já foi iniciado, caso contrário inicia a conexão
+  Future<Database> get database async {
+    if (_database != null) {
+      return _database!;
+    } else {
+      _database = await _initDatabase();
+      return _database!;
     }
   }
 
-  Future<int> insertPet(Pet pet) async{
-    final db = await database;
-    return db.insert("pets", pet.toMap());
+  // métodos do CRUD - PETS
+  Future<int> insertPet(Pet pet) async {
+    final db = await database; //verifica a conexão
+    return db.insert("pets", pet.toMap()); //inserir o dado no banco
   }
-  Future<List<Pet>> getPets() async{
-    final db = await database;
-    final List<Map<String, dynamic>> maps = await db.query("pets");
-    return maps.map((e) => Pet.fromMap(e)).toList();
+
+  Future<List<Pet>> getPets() async {
+    final db = await database; //verifica a conexão
+    final List<Map<String, dynamic>> maps = await db.query(
+      "pets",
+    ); //pegar os dados do banco
+    return maps.map((e) => Pet.fromMap(e)).toList(); //factory do BD -> obj
   }
-  Future<Pet?> getPetById(int id) async{
+
+  Future<Pet?> getPetById(int id) async {
     final db = await database;
-    final List<Map<String,dynamic>> maps = await db.query("pets", where: "id = ?", whereArgs: [id]);
+    final List<Map<String, dynamic>> maps = await db.query(
+      "pets",
+      where: "id=?",
+      whereArgs: [id],
+    );
     if (maps.isEmpty) {
       return null;
-    }else{
+    } else {
       Pet.fromMap(maps.first);
     }
+    return null;
   }
 
-  Future<int> deletePet(int id) async{
+  Future<int> deletePet(int id) async {
     final db = await database;
-    return await db.delete("pets", where: "id = ?", whereArgs: [id]);
+    return await db.delete("pets", where: "id=?", whereArgs: [id]);
+  } //DELETE  ON CASCADE  na tabela Consulta
+
+  //CRUD e CRIAR o Banco de Dados das Consultas
+
+  Future<int> insertConsulta(Consulta consulta) async {
+    final db = await database;
+    return await db.insert("consultas", consulta.toMap());
+  }
+
+  Future<List<Consulta>> getConsultasForPet(int petId) async {
+    final db = await database;
+    List<Map<String, dynamic>> maps = await db.query(
+      "consultas",
+      where: "pet_id = ?",
+      whereArgs: [petId],
+    );
+    return maps.map((e) => Consulta.fromMap(e)).toList();
+  }
+
+  Future<int> deleteConsulta(int id) async {
+    final db = await database;
+    return await db.delete("consultas", where: "id=?", whereArgs: [id]);
   }
 }
