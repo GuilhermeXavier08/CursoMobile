@@ -9,7 +9,7 @@ import '../models/pet_model.dart';
 class PetShopDBHelper {
   // fazer conexão singleton
   static Database? _database; // obj SQlite conexão com BD
-
+  
   //classe do tipo Singleton
   static final PetShopDBHelper _instance = PetShopDBHelper._internal();
 
@@ -32,7 +32,7 @@ class PetShopDBHelper {
       nome TEXT NOT NULL,
       raca TEXT NOT NULL,
       nome_dono TEXT NOT NULL,
-      telefone_dono TEXT NOT NULL);""");
+      telefone_dono TEXT NOT NULL),""");
     print("Tabela pets criada");
     await db.execute("""CREATE TABLE IF NOT EXISTS consultas(
       id INTEGER PRIMARY KEY AUTOINCREMENT,

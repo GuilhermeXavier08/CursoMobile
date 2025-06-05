@@ -4,5 +4,6 @@ import 'package:sa_petshop/view/home_screen.dart';
 void main() {
   runApp(MaterialApp(
     home: HomeScreen(),
+    debugShowCheckedModeBanner: false,
   ));
 }
