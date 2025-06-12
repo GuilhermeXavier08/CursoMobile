@@ -63,9 +63,7 @@ class PetShopDBHelper {
 
   Future<List<Pet>> getPets() async {
     final db = await database; //verifica a conexão
-    final List<Map<String, dynamic>> maps = await db.query(
-      "pets",
-    ); //pegar os dados do banco
+    final List<Map<String, dynamic>> maps = await db.query("pets",); //pegar os dados do banco
     return maps.map((e) => Pet.fromMap(e)).toList(); //factory do BD -> obj
   }
 
@@ -79,9 +77,8 @@ class PetShopDBHelper {
     if (maps.isEmpty) {
       return null;
     } else {
-      Pet.fromMap(maps.first);
+      return Pet.fromMap(maps.first);
     }
-    return null;
   }
 
   Future<int> deletePet(int id) async {

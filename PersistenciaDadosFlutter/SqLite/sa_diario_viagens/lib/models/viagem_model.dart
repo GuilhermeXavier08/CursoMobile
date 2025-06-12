@@ -7,12 +7,14 @@ class Viagem {
   final DateTime data_inicio;
   final DateTime data_fim;
 
+  final String descricao;
   Viagem({
     this.id,
     required this.titulo,
     required this.destino,
     required this.data_inicio,
     required this.data_fim,
+    required this.descricao,
   });
 
   Map<String, dynamic> toMap() {
@@ -20,8 +22,9 @@ class Viagem {
       "id": id,
       "titulo": titulo,
       "destino": destino,
-      "data_inicio": data_inicio,
-      "data_fim": data_fim,
+      "data_inicio": data_inicio.toIso8601String(),
+      "data_fim": data_fim.toIso8601String(),
+      "descricao": descricao,
     };
   }
 
@@ -32,6 +35,7 @@ class Viagem {
       destino: map["destino"] as String,
       data_inicio: DateTime.parse(map["data_inicio"] as String),
       data_fim: DateTime.parse(map["data_fim"] as String),
+      descricao: map["descricao"] as String,
     );
   }
 
