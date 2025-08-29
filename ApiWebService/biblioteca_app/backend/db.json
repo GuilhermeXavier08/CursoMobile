@@ -1,38 +1,52 @@
 {
-    "usuarios":[
-        {
-            "id": 1,
-            "nome": "João Silva",
-            "email": "js@email.com"
-        },
-        {
-            "id": 2,
-            "nome": "Márcio Silveira",
-            "email": "ms@email.com"
-        }
-    ],
-    "livros": [
-        {
-            "id": 1,
-            "titulo": "Guia dos Mochileiros da Galáxia",
-            "autor": "Douglas Noel Adans",
-            "disponivel": false
-        },
-        {
-            "id": 2,
-            "titulo": "Memórias Póstumas de Brás Cubas",
-            "autor": "Machado de Assis",
-            "disponivel": true
-        }
-    ],
-    "emprestimos":[
-        {
-            "id": 1,
-            "usuario_id": 1,
-            "livro_id": 1,
-            "data_emprestimo": "2025-08-22",
-            "data_devolucao": "2025-09-01",
-            "devolvido": false
-        }
-    ]
+  "usuarios": [
+    {
+      "id": "1",
+      "nome": "João Silva",
+      "email": "js@email.com"
+    },
+    {
+      "id": "171",
+      "nome": "Guilherme x",
+      "email": "gui@email"
+    }
+  ],
+  "livros": [
+    {
+      "id": "1",
+      "titulo": "Guia dos Mochileiros da Galáxiaa",
+      "autor": "Douglas Noel Adans",
+      "disponivel": false
+    },
+    {
+      "id": "2",
+      "titulo": "Memórias Póstumas de Brás Cubas",
+      "autor": "Machado de Assis",
+      "disponivel": false
+    },
+    {
+      "id": "1756476488756",
+      "titulo": "aaaaa",
+      "autor": "saaaa",
+      "disponivel": true
+    }
+  ],
+  "emprestimos": [
+    {
+      "id": "1",
+      "usuario_id": "1",
+      "livro_id": "1",
+      "data_emprestimo": "2025-08-22T00:00:00.000",
+      "data_devolucao": "2025-09-01T00:00:00.000",
+      "devolvido": false
+    },
+    {
+      "id": "1756477359307",
+      "usuario_id": "2",
+      "livro_id": "2",
+      "data_emprestimo": "2025-08-29T00:00:00.000",
+      "data_devolucao": "2025-09-05T00:00:00.000",
+      "devolvido": true
+    }
+  ]
 }

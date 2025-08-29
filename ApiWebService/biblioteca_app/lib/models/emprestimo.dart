@@ -23,6 +23,6 @@ class Emprestimo {
     livro_id: json["livro_id"].toString(),
     data_emprestimo: DateTime.parse(json["data_emprestimo"]),
     data_devolucao: DateTime.parse(json["data_devolucao"]),
-    devolvido: json["devolvido"]
+    devolvido: json["devolvido"] ?? true
   );
 }

@@ -17,6 +17,6 @@ class Livro {
     id: json["id"].toString(),
     titulo: json["titulo"].toString(), 
     autor: json["autor"].toString(),
-    disponivel: json["disponivel"]
+    disponivel: json["disponivel"] ?? true
   );
 }
