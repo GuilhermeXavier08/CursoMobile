@@ -2,12 +2,12 @@
   "usuarios": [
     {
       "id": "1",
-      "nome": "João Silva",
+      "nome": "João Silvaa",
       "email": "js@email.com"
     },
     {
       "id": "171",
-      "nome": "Guilherme x",
+      "nome": "Guilherme",
       "email": "gui@email"
     }
   ],
@@ -16,37 +16,23 @@
       "id": "1",
       "titulo": "Guia dos Mochileiros da Galáxiaa",
       "autor": "Douglas Noel Adans",
-      "disponivel": false
+      "disponivel": true
     },
     {
       "id": "2",
       "titulo": "Memórias Póstumas de Brás Cubas",
       "autor": "Machado de Assis",
       "disponivel": false
-    },
-    {
-      "id": "1756476488756",
-      "titulo": "aaaaa",
-      "autor": "saaaa",
-      "disponivel": true
     }
   ],
   "emprestimos": [
     {
-      "id": "1",
+      "id": "1757072619497",
       "usuario_id": "1",
       "livro_id": "1",
-      "data_emprestimo": "2025-08-22T00:00:00.000",
-      "data_devolucao": "2025-09-01T00:00:00.000",
+      "data_emprestimo": "2025-09-18T00:00:00.000",
+      "data_devolucao": "2025-09-25T00:00:00.000",
       "devolvido": false
-    },
-    {
-      "id": "1756477359307",
-      "usuario_id": "2",
-      "livro_id": "2",
-      "data_emprestimo": "2025-08-29T00:00:00.000",
-      "data_devolucao": "2025-09-05T00:00:00.000",
-      "devolvido": true
     }
   ]
 }

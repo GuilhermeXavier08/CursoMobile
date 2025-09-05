@@ -1,6 +1,6 @@
 import 'package:biblioteca_app/controllers/usuario_controller.dart';
 import 'package:biblioteca_app/models/usuario.dart';
-import 'package:biblioteca_app/views/usuario/lista_usuarios.dart';
+import 'package:biblioteca_app/views/home_view.dart';
 import 'package:flutter/material.dart';
 
 class FormUsuarios extends StatefulWidget {
@@ -29,18 +29,17 @@ class _FormUsuariosState extends State<FormUsuarios> {
   void _save() async{
     if(_formKey.currentState!.validate()){
       final user = Usuario(
-        id: DateTime.now().millisecond.toString(), //criar um ID 
+        id: DateTime.now().millisecond.toString(),
         nome: _nomeField.text.trim(), 
         email: _emailField.text.trim());
       try {
         await _controller.create(user);
-        //mensagem de criação com sucesso
       } catch (e) {
-        //tratar erro
+
       }
       Navigator.pop(context);
       Navigator.pushReplacement(context, 
-      MaterialPageRoute(builder: (context)=> ListaUsuarios()));
+      MaterialPageRoute(builder: (context)=> HomeView()));
     }
   }
 
@@ -59,7 +58,7 @@ class _FormUsuariosState extends State<FormUsuarios> {
       Navigator.pop(context);
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => ListaUsuarios()),
+        MaterialPageRoute(builder: (context) => HomeView()),
       );
     }
   }

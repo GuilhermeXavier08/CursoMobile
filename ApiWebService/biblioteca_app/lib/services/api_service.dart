@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class ApiService {
-  static const _baseUrl = "http://10.109.197.5:3014";
+  static const _baseUrl = "http://10.109.197.4:3014";
 
   static Future<List<dynamic>> getList(String path) async{
     final res = await http.get(Uri.parse("$_baseUrl/$path"));

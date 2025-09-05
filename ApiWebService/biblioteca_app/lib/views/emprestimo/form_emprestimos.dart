@@ -1,6 +1,8 @@
+import 'package:biblioteca_app/controllers/Livro_controller.dart';
 import 'package:biblioteca_app/controllers/emprestimo_controller.dart';
+import 'package:biblioteca_app/controllers/usuario_controller.dart';
 import 'package:biblioteca_app/models/emprestimo.dart';
-import 'package:biblioteca_app/views/emprestimo/lista_emprestimos.dart';
+import 'package:biblioteca_app/views/home_view.dart';
 import 'package:flutter/material.dart';
 
 class FormEmprestimos extends StatefulWidget {
@@ -14,12 +16,19 @@ class FormEmprestimos extends StatefulWidget {
 class _FormEmprestimosState extends State<FormEmprestimos> {
   final _formKey = GlobalKey<FormState>();
   final _controller = EmprestimoController();
+  final _usuarioController = UsuarioController();
+  final _livroController = LivroController();
 
   final _usuarioField = TextEditingController();
   final _livroField = TextEditingController();
   DateTime _dataEmprestimo = DateTime.now();
   DateTime _dataDevolucao = DateTime.now().add(Duration(days: 7));
   bool _devolvido = false;
+
+  DateTime _hoje() {
+    final now = DateTime.now();
+    return DateTime(now.year, now.month, now.day);
+  }
 
   @override
   void initState() {
@@ -30,49 +39,120 @@ class _FormEmprestimosState extends State<FormEmprestimos> {
       _dataEmprestimo = widget.emprestimo!.data_emprestimo;
       _dataDevolucao = widget.emprestimo!.data_devolucao;
       _devolvido = widget.emprestimo!.devolvido;
+    } else {
+      _dataEmprestimo = _hoje();
+      _dataDevolucao = _hoje().add(Duration(days: 7));
     }
   }
 
-  void _save() async {
+  Future<void> _save() async {
     if (_formKey.currentState!.validate()) {
-      final emprestimo = Emprestimo(
-        id: DateTime.now().millisecondsSinceEpoch.toString(),
-        usuario_id: _usuarioField.text.trim(),
-        livro_id: _livroField.text.trim(),
-        data_emprestimo: _dataEmprestimo,
-        data_devolucao: _dataDevolucao,
-        devolvido: _devolvido,
-      );
+      if (_dataEmprestimo.isAfter(_dataDevolucao) ||
+          _dataEmprestimo.isAtSameMomentAs(_dataDevolucao)) {
+        _showDialog("A data de empréstimo deve ser menor que a data de devolução!");
+        return;
+      }
+
+      final usuarioId = _usuarioField.text.trim();
+      final livroId = _livroField.text.trim();
+
       try {
+        final usuario = await _usuarioController.fetchOne(usuarioId);
+        if (usuario == null) {
+          _showDialog("Usuário com ID $usuarioId não encontrado!");
+          return;
+        }
+
+        final livro = await _livroController.fetchOne(livroId);
+        if (livro == null) {
+          _showDialog("Livro com ID $livroId não encontrado!");
+          return;
+        }
+
+        final emprestimo = Emprestimo(
+          id: DateTime.now().millisecondsSinceEpoch.toString(),
+          usuario_id: usuarioId,
+          livro_id: livroId,
+          data_emprestimo: _dataEmprestimo,
+          data_devolucao: _dataDevolucao,
+          devolvido: _devolvido,
+        );
+
         await _controller.create(emprestimo);
-      } catch (e) {}
-      Navigator.pop(context);
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => ListaEmprestimos()),
-      );
+
+        Navigator.pop(context);
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => HomeView()),
+        );
+      } catch (e) {
+        _showDialog("Erro inesperado: $e");
+      }
     }
   }
 
   void _update() async {
     if (_formKey.currentState!.validate()) {
-      final emprestimo = Emprestimo(
-        id: widget.emprestimo?.id,
-        usuario_id: _usuarioField.text.trim(),
-        livro_id: _livroField.text.trim(),
-        data_emprestimo: _dataEmprestimo,
-        data_devolucao: _dataDevolucao,
-        devolvido: _devolvido,
-      );
+      if (_dataEmprestimo.isAfter(_dataDevolucao) ||
+          _dataEmprestimo.isAtSameMomentAs(_dataDevolucao)) {
+        _showDialog("A data de empréstimo deve ser menor que a data de devolução!");
+        return;
+      }
+
+      final usuarioId = _usuarioField.text.trim();
+      final livroId = _livroField.text.trim();
+
       try {
+        final usuario = await _usuarioController.fetchOne(usuarioId);
+        if (usuario == null) {
+          _showDialog("Usuário com ID $usuarioId não encontrado!");
+          return;
+        }
+
+        final livro = await _livroController.fetchOne(livroId);
+        if (livro == null) {
+          _showDialog("Livro com ID $livroId não encontrado!");
+          return;
+        }
+
+        final emprestimo = Emprestimo(
+          id: widget.emprestimo?.id,
+          usuario_id: usuarioId,
+          livro_id: livroId,
+          data_emprestimo: _dataEmprestimo,
+          data_devolucao: _dataDevolucao,
+          devolvido: _devolvido,
+        );
+
         await _controller.updated(emprestimo);
-      } catch (e) {}
-      Navigator.pop(context);
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => ListaEmprestimos()),
-      );
+
+        Navigator.pop(context);
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => HomeView()),
+        );
+      } catch (e) {
+        _showDialog("Erro ao atualizar empréstimo!");
+      }
     }
+  }
+
+  void _showDialog(String msg) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text("Aviso"),
+          content: Text(msg),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text("OK"),
+            )
+          ],
+        );
+      },
+    );
   }
 
   Future<void> _selecionarDataEmprestimo() async {
@@ -83,7 +163,7 @@ class _FormEmprestimosState extends State<FormEmprestimos> {
       lastDate: DateTime(2100),
     );
     if (data != null) {
-      setState(() => _dataEmprestimo = data);
+      setState(() => _dataEmprestimo = DateTime(data.year, data.month, data.day));
     }
   }
 
@@ -95,7 +175,7 @@ class _FormEmprestimosState extends State<FormEmprestimos> {
       lastDate: DateTime(2100),
     );
     if (data != null) {
-      setState(() => _dataDevolucao = data);
+      setState(() => _dataDevolucao = DateTime(data.year, data.month, data.day));
     }
   }
 

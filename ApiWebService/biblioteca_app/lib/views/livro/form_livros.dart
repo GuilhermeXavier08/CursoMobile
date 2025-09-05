@@ -1,6 +1,6 @@
 import 'package:biblioteca_app/controllers/Livro_controller.dart';
 import 'package:biblioteca_app/models/livro.dart';
-import 'package:biblioteca_app/views/livro/lista_livros.dart';
+import 'package:biblioteca_app/views/home_view.dart';
 import 'package:flutter/material.dart';
 
 class FormLivros extends StatefulWidget {
@@ -42,38 +42,38 @@ class _FormLivrosState extends State<FormLivros> {
       Navigator.pop(context);
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => ListaLivros()),
+        MaterialPageRoute(builder: (context) => HomeView()),
       );
     }
   }
 
   void _update() async {
-    if (_formKey.currentState!.validate()) {
-      final book = Livro(
-        id: widget.book?.id!,
-        titulo: _tituloField.text.trim(),
-        autor: _autorField.text.trim(),
-        disponivel: _disponivel,
-      );
-      try {
-        await _controller.update(book);
-      } catch (e) {}
-      Navigator.pop(context);
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => ListaLivros()),
-      );
-    }
+    final book = Livro(
+      id: widget.book?.id!,
+      titulo: widget.book!.titulo,
+      autor: widget.book!.autor,
+      disponivel: _disponivel,
+    );
+    try {
+      await _controller.update(book);
+    } catch (e) {}
+    Navigator.pop(context);
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => HomeView()),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
+    final isEditing = widget.book != null;
+
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
         backgroundColor: const Color.fromARGB(255, 5, 102, 180),
         title: Text(
-          widget.book == null ? "Novo Livro" : "Editar Livro",
+          isEditing ? "Editar Disponibilidade" : "Novo Livro",
           style: TextStyle(color: Colors.white),
         ),
       ),
@@ -85,20 +85,24 @@ class _FormLivrosState extends State<FormLivros> {
             children: [
               TextFormField(
                 controller: _tituloField,
+                enabled: !isEditing, // desativa edição quando já existe
                 decoration: InputDecoration(
                   labelText: "Título",
                   border: OutlineInputBorder(),
                 ),
-                validator: (value) => value!.isEmpty ? "Informe o título" : null,
+                validator: (value) =>
+                    value!.isEmpty ? "Informe o título" : null,
               ),
               SizedBox(height: 12),
               TextFormField(
                 controller: _autorField,
+                enabled: !isEditing, // desativa edição quando já existe
                 decoration: InputDecoration(
                   labelText: "Autor",
                   border: OutlineInputBorder(),
                 ),
-                validator: (value) => value!.isEmpty ? "Informe o autor" : null,
+                validator: (value) =>
+                    value!.isEmpty ? "Informe o autor" : null,
               ),
               SizedBox(height: 12),
               Row(
@@ -117,8 +121,10 @@ class _FormLivrosState extends State<FormLivros> {
               ),
               SizedBox(height: 20),
               ElevatedButton(
-                onPressed: widget.book == null ? _save : _update,
-                child: Text(widget.book == null ? "Criar Livro" : "Atualizar Livro"),
+                onPressed: isEditing ? _update : _save,
+                child: Text(isEditing
+                    ? "Atualizar Status"
+                    : "Criar Livro"),
               ),
             ],
           ),
