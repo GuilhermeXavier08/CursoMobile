@@ -14,17 +14,21 @@ class _RegistroViewState extends State<RegistroView> {
   final _emailField = TextEditingController();
   final _senhaField = TextEditingController();
   final _confirmarSenhaField = TextEditingController();
+  bool _ocultarSenha = true;
+  bool _ocultarConfirmarSenha = true;
 
-  void _registrar() async{
+  //método para registrar o usuario
+  void _registrar() async {
     if (_senhaField.text != _confirmarSenhaField.text) return;
     try {
       await _auth.createUserWithEmailAndPassword(
-        email: _emailField.text.trim(), 
+        email: _emailField.text.trim(),
         password: _senhaField.text.trim(),
       );
+      Navigator.pop(context);
     } on FirebaseAuthException catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Ero de novo paizão no registro ainda slk: $e"))
+        SnackBar(content: Text("Erro ao registrar: $e")),
       );
     }
   }
@@ -33,7 +37,7 @@ class _RegistroViewState extends State<RegistroView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Registro"),
+        title: Text("Registro", style: TextStyle(color: Colors.white),),
         centerTitle: true,
         backgroundColor: const Color.fromARGB(255, 6, 106, 189),
       ),
@@ -48,22 +52,51 @@ class _RegistroViewState extends State<RegistroView> {
             ),
             TextField(
               controller: _senhaField,
-              decoration: InputDecoration(labelText: "Senha"),
-              obscureText: true,
+              decoration: InputDecoration(
+                labelText: "Senha",
+                suffix: IconButton(
+                  onPressed: () => setState(() {
+                    _ocultarSenha = !_ocultarSenha;
+                  }),
+                  icon: Icon(
+                    _ocultarSenha ? Icons.visibility : Icons.visibility_off,
+                  ),
+                ),
+              ),
+              obscureText: _ocultarSenha,
             ),
             TextField(
               controller: _confirmarSenhaField,
-              decoration: InputDecoration(labelText: "Confirmar Senha"),
-              obscureText: true,
+              decoration: InputDecoration(
+                labelText: "Confirmar Senha",
+                suffix: IconButton(
+                  onPressed: () => setState(() {
+                    _ocultarConfirmarSenha = !_ocultarConfirmarSenha;
+                  }),
+                  icon: Icon(
+                    _ocultarConfirmarSenha ? Icons.visibility : Icons.visibility_off,
+                  ),
+                ),
+              ),
+              obscureText: _ocultarConfirmarSenha,
             ),
             SizedBox(height: 20),
             _senhaField.text != _confirmarSenhaField.text
-            ? Text("As senhas devem ser iguais", style: TextStyle(color: Colors.red, fontSize: 12))
-            : ElevatedButton(onPressed: _registrar, child: Text("Registrar")),
+                ? Text(
+                    "As senhas devem ser iguais",
+                    style: TextStyle(color: Colors.red, fontSize: 12),
+                  )
+                : ElevatedButton(
+                    onPressed: _registrar,
+                    child: Text("Registrar"),
+                  ),
             TextButton(
-              onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => LoginView())), 
-            child: Text("Já tem uma conta?????????? Loga aqui irmão")
-            )
+              onPressed: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => LoginView()),
+              ),
+              child: Text("Já tem uma conta? Entre nela aqui!"),
+            ),
           ],
         ),
       ),

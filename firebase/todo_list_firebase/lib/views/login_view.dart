@@ -10,29 +10,33 @@ class LoginView extends StatefulWidget {
 }
 
 class _LoginViewState extends State<LoginView> {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseAuth _auth =
+      FirebaseAuth.instance; //controlador das acoes de autenticacao do usuario
   final _emailField = TextEditingController();
   final _senhaField = TextEditingController();
-
+  bool _ocultarSenha = true;
+  //método para fazer o login
   void _signIn() async {
     try {
       await _auth.signInWithEmailAndPassword(
+        //chama o método de autenticacao do controller por email e senha
         email: _emailField.text.trim(),
-        password: _senhaField.text.trim(),
+        password: _senhaField.text,
         //verifica se consegui autenticacao no firebase
       );
     } catch (e) {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text("Deu ruim no login paizão: $e")));
+      ).showSnackBar(SnackBar(content: Text("Erro no login: $e")));
     }
   }
 
+  //build da tela
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Login"),
+        title: Text("Login", style: TextStyle(color: Colors.white),),
         centerTitle: true,
         backgroundColor: const Color.fromARGB(255, 6, 106, 189),
       ),
@@ -47,15 +51,28 @@ class _LoginViewState extends State<LoginView> {
             ),
             TextField(
               controller: _senhaField,
-              decoration: InputDecoration(labelText: "Senha"),
-              obscureText: true,
+              decoration: InputDecoration(
+                labelText: "Senha",
+                suffix: IconButton(
+                  onPressed: () => setState(() {
+                    _ocultarSenha = !_ocultarSenha;
+                  }),
+                  icon: Icon(
+                    _ocultarSenha ? Icons.visibility : Icons.visibility_off,
+                  ),
+                ),
+              ),
+              obscureText: _ocultarSenha,
             ),
             SizedBox(height: 20),
             ElevatedButton(onPressed: _signIn, child: Text("Login")),
             TextButton(
-              onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => RegistroView())), 
-            child: Text("Não tem uma conta?????????? Cria aqui irmão")
-            )
+              onPressed: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => RegistroView()),
+              ),
+              child: Text("Não tem uma conta? Crie aqui!"),
+            ),
           ],
         ),
       ),
