@@ -36,7 +36,7 @@ class _HomeViewState extends State<HomeView> {
         onTap: (value) => setState(() => _index = value),
         items: [
           BottomNavigationBarItem(icon: Icon(Icons.favorite), label: "Favoritos"),
-          BottomNavigationBarItem(icon: Icon(Icons.loupe), label: "Buscar Filmes")
+          BottomNavigationBarItem(icon: Icon(Icons.search), label: "Buscar Filmes")
         ]
       ),
     );
