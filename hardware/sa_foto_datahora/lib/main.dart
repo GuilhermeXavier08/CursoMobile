@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:sa_geolocator_maps/views/map_view.dart';
+import 'package:sa_foto_datahora/view/foto_screen.dart';
 
-void main(){
+void main() {
   runApp(
     MaterialApp(
-      home: MapView(),
       debugShowCheckedModeBanner: false,
+      home: FotoScreen(),
     )
   );
 }
+
